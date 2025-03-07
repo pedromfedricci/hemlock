@@ -1,0 +1,33 @@
+[package]
+description = """
+An implementation of Dave Dice and Alex Kogan compact and scalable mutual
+exclusion lock, referred to as Hemlock.
+"""
+name = "hemlocker"
+version = "0.0.1"
+edition = "2021"
+# NOTE: Rust 1.70 is required for `AtomicPtr::as_ptr`.
+rust-version = "1.70.0"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+documentation = "https://docs.rs/hemlocker"
+repository = "https://github.com/pedromfedricci/hemlock"
+authors = ["Pedro de Matos Fedricci <pedromfedricci@gmail.com>"]
+categories = ["algorithms", "concurrency", "no-std", "no-std::no-alloc"]
+keywords = ["mutex", "no_std", "spinlock", "synchronization"]
+
+[features]
+# NOTE: Features `yield`, `thread_local` and requires std.
+yield = []
+thread_local = []
+
+[target.'cfg(loom)'.dev-dependencies.loom]
+version = "0.7"
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[lints.rust.unexpected_cfgs]
+level = "warn"
+check-cfg = ["cfg(tarpaulin)", "cfg(tarpaulin_include)", "cfg(loom)"]
