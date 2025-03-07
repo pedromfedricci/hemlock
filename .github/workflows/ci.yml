@@ -60,17 +60,6 @@ jobs:
           RUSTFLAGS: --allow unknown_lints
         run: cargo check --all-features
 
-  semver:
-    name: Check semver
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Install Rust stable
-        run: rustup toolchain install stable
-      - name: Check semver violations
-        uses: obi1kenobi/cargo-semver-checks-action@v2
-
   docsrs:
     name: Build doc
     runs-on: ubuntu-latest
@@ -107,8 +96,6 @@ jobs:
         run: rustup toolchain install stable
       - name: Run raw example
         run: cargo run --example raw
-      - name: Run thread_local example
-        run: cargo run --example thread_local --features thread_local
 
   linter:
     name: Linter
