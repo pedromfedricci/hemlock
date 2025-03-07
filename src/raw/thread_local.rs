@@ -54,8 +54,6 @@ type Key = &'static LocalMutexNode;
 /// [`std::thread_local!`]: https://doc.rust-lang.org/std/macro.thread_local.html
 /// [`try_lock_with_local_then`]: Mutex::try_lock_with_local_then
 /// [`lock_with_local_then`]: Mutex::lock_with_local_then
-/// [`try_lock_with_local_then_unchecked`]: Mutex::try_lock_with_local_then_unchecked
-/// [`lock_with_local_then_unchecked`]: Mutex::lock_with_local_then_unchecked
 #[macro_export]
 macro_rules! thread_local_node {
     // Empty (base for recursion).

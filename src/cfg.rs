@@ -2,10 +2,10 @@ pub mod atomic {
     pub use sealed::AtomicPtrNull;
 
     #[cfg(not(all(loom, test)))]
-    pub use core::sync::atomic::{fence, AtomicBool, AtomicPtr, AtomicUsize};
+    pub use core::sync::atomic::{fence, AtomicPtr, AtomicUsize};
 
     #[cfg(all(loom, test))]
-    pub use loom::sync::atomic::{fence, AtomicBool, AtomicPtr, AtomicUsize};
+    pub use loom::sync::atomic::{fence, AtomicPtr, AtomicUsize};
 
     impl<T> AtomicPtrNull for AtomicPtr<T> {
         type Target = T;
@@ -44,7 +44,10 @@ pub mod atomic {
 }
 
 pub mod cell {
-    pub use sealed::{CellNullMut, UnsafeCellOptionWith, UnsafeCellWith};
+    pub use sealed::{UnsafeCellOptionWith, UnsafeCellWith};
+
+    #[cfg(not(all(loom, test)))]
+    pub use sealed::CellNullMut;
 
     #[cfg(not(all(loom, test)))]
     pub use core::cell::{Cell, UnsafeCell};
@@ -119,25 +122,17 @@ pub mod cell {
         }
     }
 
+    #[cfg(not(all(loom, test)))]
     impl<T> CellNullMut for Cell<*mut T> {
         type Target = T;
 
         #[rustfmt::skip]
-        #[cfg(not(all(loom, test)))]
         const NULL_MUT: Cell<*mut Self::Target> = {
             Self::new(core::ptr::null_mut())
         };
-
-        #[cfg(all(loom, test))]
-        #[cfg(not(tarpaulin_include))]
-        fn null_mut() -> Cell<*mut Self::Target> {
-            Self::new(core::ptr::null_mut())
-        }
     }
 
     mod sealed {
-        use super::Cell;
-
         /// A trait that extends [`UnsafeCell`] to allow running closures against
         /// its underlying data.
         pub trait UnsafeCellWith {
@@ -183,18 +178,14 @@ pub mod cell {
         }
 
         /// A trait that extends [`Cell`] to allow creating `null` values.
+        #[cfg(not(all(loom, test)))]
         pub trait CellNullMut {
             /// The type of the data inner pointer points to.
             type Target;
 
             /// A compiler time evaluable [`Cell`] holding a `null` pointer.
-            #[cfg(not(all(loom, test)))]
             #[allow(clippy::declare_interior_mutable_const)]
-            const NULL_MUT: Cell<*mut Self::Target>;
-
-            /// Returns a Loom based [`Cell`] holding a `null` pointer (non-const).
-            #[cfg(all(loom, test))]
-            fn null_mut() -> Cell<*mut Self::Target>;
+            const NULL_MUT: super::Cell<*mut Self::Target>;
         }
     }
 }
